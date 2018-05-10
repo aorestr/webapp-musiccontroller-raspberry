@@ -1,0 +1,4 @@
+# Files created by default by Python #
+*.pyc
+# Folder with the Visual Code folder confif #
+.vscode

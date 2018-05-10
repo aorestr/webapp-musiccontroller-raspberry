@@ -53,7 +53,8 @@ class PyCmus(object):
             self.server = server
             if not password:
                 raise exceptions.ConfigurationError(
-                    "A password is required if using a remote connection")
+                    "A password is required if using a remote connection"
+                )
             self.password = password
             self.socket_file = None
         else:
@@ -63,11 +64,20 @@ class PyCmus(object):
             if password:
                 LOG.warning("Provided password is ignored in the local case")
         if not self.server:
-            self.socket = socket.socket(socket.AF_UNIX, socket.SOCK_STREAM, 0)
-            self.socket.connect(self.socket_file)
+            try:
+                self.socket = socket.socket(socket.AF_UNIX, socket.SOCK_STREAM, 0)
+                self.socket.connect(self.socket_file)
+            except FileNotFoundError as ExpError:
+                print('There is no cmus instance running: ',end='')
+                print(ExpError)
+                raise(exceptions.CmusNotRunning)
+            except Exception as NonExpError:
+                print('Unexpected error: ',end='')
+                print(NonExpError)
+                raise(exceptions.CmusNotRunning)
         else:
             for addr in socket.getaddrinfo(self.server, self.port):
-                af, socktype, proto, cannonname, sa = addr
+                (af, _, proto, _, sa) = addr
                 try:
                     self.socket = socket.socket(af, socket.SOCK_STREAM, proto)
                     self.socket.connect(sa)
@@ -78,10 +88,28 @@ class PyCmus(object):
                 raise exceptions.ConfigurationError(
                     "Unable to connect to server %s" % self.server)
         self.socket.setblocking(0)
+   
+
+    def _get_socket_path(self, socket_path=None):
+        """
+        Search for the socket where cmus is listening
+        for remote connections
+        """
+        if "CMUS_SOCKET" in os.environ:
+            print(os.environ["CMUS_SOCKET"])
+            return os.environ["CMUS_SOCKET"]
+        else:
+            if "XDG_RUNTIME_DIR" in os.environ:
+                return os.path.join(os.environ["XDG_RUNTIME_DIR"],
+                                    "cmus-socket")
+            else:
+                conf_dir = self._get_cmus_conf_dir(socket_path)
+                return os.path.join(conf_dir, 'socket')
 
     def _get_cmus_conf_dir(self, socket_path=None):
         if socket_path:
             return socket_path
+
         if "CMUS_HOME" in os.environ:
             conf_dir = os.environ["CMUS_HOME"]
         elif os.path.isdir(os.path.join(os.path.expanduser('~'), '.cmus')):
@@ -93,22 +121,13 @@ class PyCmus(object):
         elif os.path.isdir(os.path.join(os.path.expanduser('~'), '.config',
                                         'cmus')):
             conf_dir = os.path.join(os.path.expanduser('~'), '.config', 'cmus')
-
         else:
             os.mkdir(os.path.join(os.path.expanduser('~'), '.cmus'))
             conf_dir = os.path.join(os.path.expanduser('~'), '.cmus')
+
         return conf_dir
 
-    def _get_socket_path(self, socket_path=None):
-        if "CMUS_SOCKET" in os.environ:
-            return os.environ["CMUS_SOCKET"]
-        else:
-            if "XDG_RUNTIME_DIR" in os.environ:
-                return os.path.join(os.environ["XDG_RUNTIME_DIR"],
-                                    "cmus-socket")
-            else:
-                conf_dir = self._get_cmus_conf_dir(socket_path)
-                return os.path.join(conf_dir, 'socket')
+    ########################################################################
 
     def send_cmd(self, cmd):
         """Send a raw command to cmus
@@ -173,7 +192,9 @@ class PyCmus(object):
 
     def player_pause(self):
         """Send a player pause command."""
-        self.send_cmd('player-pause\n')
+        status = self.get_status_dict()['status']
+        if not(status == 'paused' or status == 'stopped'):
+            self.send_cmd('player-pause\n')
 
     def player_pause_playback(self):
         """Send a player pause playback command."""
