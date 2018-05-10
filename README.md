@@ -1,1 +1,2 @@
-# webapp-musiccontroller-raspberry
+# WebApp music controller for Raspberry Pi
+
