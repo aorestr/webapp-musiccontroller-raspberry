@@ -1,4 +1,9 @@
 # Files created by default by Python #
 *.pyc
+*__pycache__/
+
 # Folder with the Visual Code folder confif #
-.vscode
+.vscode/
+
+# No test will be upload
+*test*

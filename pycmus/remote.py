@@ -94,6 +94,7 @@ class PyCmus(object):
         """
         Search for the socket where cmus is listening
         for remote connections
+        :param str socket_path: The path to the local unix socket for cmus
         """
         if "CMUS_SOCKET" in os.environ:
             print(os.environ["CMUS_SOCKET"])
