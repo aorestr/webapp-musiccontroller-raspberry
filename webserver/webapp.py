@@ -12,7 +12,9 @@ class MusicControllerWeb(object):
         :param str name: the name for the app
         """
         super(MusicControllerWeb, self).__init__()
-        self.app = Flask(name)
+        self.app = Flask(
+            name, template_folder="webserver/templates", static_folder="webserver/static"
+        )
         self.render_web()
 
     def render_web(self):
@@ -21,12 +23,4 @@ class MusicControllerWeb(object):
         """
         @self.app.route('/')
         def index():
-            return render_template('html_basic.html')
-
-        @self.app.route('/cakes')
-        def cakes():
-            return 'Yummy cakes!'
-
-        @self.app.route('/hello/<name>')
-        def hello(name):
-            return render_template('page.html', name=name)
+            return render_template('mainpage.html')

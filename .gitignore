@@ -2,8 +2,11 @@
 *.pyc
 *__pycache__/
 
-# Folder with the Visual Code folder confif #
+# Virtual environment #
+venv/
+
+# Folder with the Visual Code folder config #
 .vscode/
 
-# No test will be upload
+# No test will be uploaded #
 *test*
