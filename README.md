@@ -15,5 +15,4 @@ In order to create the server, we need to be sure we have Flask installed in our
 user@system:~/webapp-musiccontroller-raspberry$ python3 -m venv venv
 user@system:~/webapp-musiccontroller-raspberry$ source venv/bin/activate
 (venv) user@system:~/webapp-musiccontroller-raspberry$ pip install Flask
-
 ```

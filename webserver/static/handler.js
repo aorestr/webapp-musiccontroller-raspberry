@@ -14,8 +14,24 @@ $(document).ready(function() {
     /**
      * Click on play button
      */
-    $("#play_arrow").click(function(){
-        alert("Chachi pistachi");
+    $("#player").click(function(){
+        // Create a JSON file that will be sent to
+        // the server indicating the play arrow has been
+        // clicked
+        var action = [{"button":"player"}];
+        // Send the variable
+        $.ajax({
+            type: 'POST',
+            contentType: 'application/json; charset=utf-8',
+            url: '/_post_data',
+            dataType : 'json',
+            data : JSON.stringify(action),
+            success : function(result) {
+              jQuery("#clash").html(result); 
+            },error : function(result){
+               console.log(result);
+            }
+        });
     });
 
 });

@@ -19,13 +19,17 @@ import logging
 import os
 import socket
 import time
-
-import six
+# I had some problems running this code. It seems
+# my venv didn't install by default this module
+try:
+    import six
+except (ModuleNotFoundError, ImportError):
+    from pip import main
+    main(['install', 'six'])
 
 from pycmus import exceptions
 
 LOG = logging.getLogger(__name__)
-
 
 class PyCmus(object):
     """PyCmus remote class

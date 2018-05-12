@@ -55,7 +55,13 @@ THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR IMPLI
 			</div>
 			<div class="controls">
 				<i class="material-icons">skip_previous</i>
-				<i id="play_arrow" class="material-icons">play_arrow</i>
+				<i id="player" class="material-icons">
+					{% if cmus_status['status'] == 'playing' %}
+						pause
+					{% else %}
+						play_arrow
+					{% endif %}
+				</i>
 				<i class="material-icons">skip_next</i>
 			</div>
 		</div>
@@ -127,7 +133,9 @@ THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR IMPLI
 		</div>
 	</div>
 	
+	<!-- Google’s AJAX Libraries API to load jQuery -->
 	<script type="text/javascript" src="https://ajax.googleapis.com/ajax/libs/jquery/3.3.1/jquery.min.js"></script>
+	<!-- My script -->
 	<script type="text/javascript" src="static/handler.js"></script>
 
 </body>
