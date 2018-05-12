@@ -19,9 +19,9 @@ class MusicControllerWeb(object):
             name, template_folder="webserver/templates", static_folder="webserver/static"
         )
         self.cmus = cmus
-        self.render_web()
+        self._render_web()
 
-    def render_web(self):
+    def _render_web(self):
         """
         Render the domains the web will use
         """
@@ -32,34 +32,41 @@ class MusicControllerWeb(object):
             try:
                 _cmus_status = self.cmus.get_status_dict()
             except BrokenPipeError as err:
-                MusicControllerWeb.cmus_connection_failed(err)
+                MusicControllerWeb._cmus_connection_failed(err)
             return render_template('mainpage.html', cmus_status=_cmus_status)
 
         @self.app.route('/_post_data', methods = ['POST'])
         def worker():
             jsonData = request.get_json()
-            self.post_handler(jsonData)
-            return jsonify(success=True, data=jsonData)
+            self._post_handler(jsonData)
+            return jsonify(success=True, data=self.cmus.get_status_dict())
             
-    def post_handler(self, jsonData):
+    def _post_handler(self, jsonData):
         """
         It uses the data the server has received from the client
         and translate it into orders for cmus
 
         :param lst jsonData: the dictionary with the data
         """
+
+        # Buttons implemented on the webapp
+        buttons = {
+            1: 'player'
+        }
+
+        btn_clicked = jsonData[0]['button']
         try:
-            if jsonData[0]['button'] == 'player':
+            if btn_clicked == buttons[1]:
                 if self.cmus.get_status_dict()['status'] == 'playing':
                     self.cmus.player_pause()
                 else:
                     self.cmus.player_play()
                 
         except BrokenPipeError as err:
-            MusicControllerWeb.cmus_connection_failed(err)
+            MusicControllerWeb._cmus_connection_failed(err)
 
     @staticmethod
-    def cmus_connection_failed(err):
+    def _cmus_connection_failed(err):
         """
         We call this method if the connection with
         cmus breaks

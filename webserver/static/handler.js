@@ -1,5 +1,5 @@
 /**
- * Preloading screan
+ * Preloading screen
  */
 $(window).on('load', 
     function() {
@@ -27,9 +27,11 @@ $(document).ready(function() {
             dataType : 'json',
             data : JSON.stringify(action),
             success : function(result) {
-              jQuery("#clash").html(result); 
+                // Change the symbols depending on the status
+                $("#player").text( ((result['data']['status'] == "playing") ? "pause":"play_arrow") );
+                console.log('Well received signal'); 
             },error : function(result){
-               console.log(result);
+                console.log(result);
             }
         });
     });

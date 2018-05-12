@@ -3,20 +3,45 @@
 from webserver.webapp import MusicControllerWeb
 from sys import argv
 from pycmus import remote, exceptions
-from sys import exit
 
+import sys
+import os
+import time
 
 if __name__ == '__main__':
 
+    # Create a new process in which execute cmus
     try:
-        cmus = remote.PyCmus()
-    except exceptions.CmusNotRunning:
-        # If cmus is not running we do nothing
-        exit('Exiting program...')
-    else:  
+        import subprocess
+        cmus_process = subprocess.Popen(args=["cmus"], stdout=subprocess.PIPE, stderr=subprocess.STDOUT)
+    except Exception as err:
+        print('Impossible to open a new cmus instance: ', end='')
+        print(err)
+    finally:
+        # Try to connect to cmus server
+        max_time = 5
+        start_time = time.time()
+        while True:
+            try:
+                cmus = remote.PyCmus()
+                break
+            except exceptions.CmusNotRunning:
+                if (time.time() - start_time <= max_time):
+                    # If connection has been rejected but
+                    # the max time hasn't passed, we try
+                    # agains
+                    time.sleep(1)
+                    continue 
+                else:
+                    print('Impossible to connect to cmus. Exiting the program...')
+                    try:
+                        cmus_process.terminate()
+                    except OSError:
+                        pass
+                    sys.exit(1)
         # We can choose the port where we will have
         # our app running from the console
-        if len(argv) == 1:
+        if len(argv) == 1:  
             port = None
         elif len(argv) == 2:
             try:
@@ -33,12 +58,18 @@ if __name__ == '__main__':
         try:
             flask_object = MusicControllerWeb(__name__, cmus)
             flask_object.app.run(
-                debug=True,
+                debug=False,
                 host='0.0.0.0',
                 threaded=True,
                 port=port
             )
         except Exception as err:
-            print('Some problem occurs: ', end='')
+            print('Some problem occured: ', end='')
             print(err)
-            exit('Exiting program...')
+            sys.exit('Exiting program...')
+        # Before leaving the program, we close
+        # the fork with cmus
+        try:
+            cmus_process.terminate()
+        except OSError:
+            pass
