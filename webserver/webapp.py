@@ -57,7 +57,7 @@ class MusicControllerWeb(object):
         btn_clicked = jsonData[0]['button']
         try:
             if btn_clicked == buttons[1]:
-                if self.cmus.get_status_dict()['status'] == 'playing':
+                if self.cmus.get_only_status() == 'playing':
                     self.cmus.player_pause()
                 else:
                     self.cmus.player_play()
@@ -71,16 +71,14 @@ class MusicControllerWeb(object):
         We call this method if the connection with
         cmus breaks
         """
-        print('Connection with cmus has been closed: ', end='')
-        print(err)
+        print('Connection with cmus has been closed: {}'.format(err))
         try:
             print('Closing server',end='')
             MusicControllerWeb.shutdown_server()
             print('ok')
-        except Exception as err:
+        except Exception as err2:
             from sys import exit
-            print('Some problem occured: ', end='')
-            print(err)
+            print('\nSome problem occured: {}'.format(err2))
             exit('Exiting program...')
 
     @staticmethod

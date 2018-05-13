@@ -197,7 +197,7 @@ class PyCmus(object):
 
     def player_pause(self):
         """Send a player pause command."""
-        status = self.get_status_dict()['status']
+        status = self.get_only_status()
         if not(status == 'paused' or status == 'stopped'):
             self.send_cmd('player-pause\n')
 
@@ -240,6 +240,20 @@ class PyCmus(object):
         :rtype: str
         """
         return self.send_cmd('status\n')
+
+    def get_only_status(self):
+        """
+        Most of the times we will need only the current status
+        of the player (playing, paused...). Not getting the whole
+        dictionary will save us some time
+        :return status: only the player status
+        :rtype: str
+        """
+        status = self.status().split('\n')[0].split(' ')
+        if status[0] == 'status':
+            return status[1]
+        else:
+            return self.get_status_dict()['status']
 
     def get_status_dict(self):
         """Send a status command and format response as a dictionary
