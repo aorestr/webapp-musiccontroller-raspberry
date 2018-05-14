@@ -1,7 +1,5 @@
 #!./venv/bin/python3
 
-from webserver.webapp import MusicControllerWeb
-from sys import argv
 from pycmus import remote, exceptions
 
 import sys
@@ -27,7 +25,7 @@ def exit_cmus(cmus, cmus_process):
             except OSError:
                 pass
 
-def main(port=None, music_folder='musi/'):
+def main(port=None, music_folder='music/'):
     """
     Main function.
     :param int port: port where the server will be
@@ -45,6 +43,7 @@ def main(port=None, music_folder='musi/'):
         start_time = time.time()
         while True:
             try:
+                print('Trying to connect to cmus... ', end='')
                 cmus = remote.PyCmus()
                 break
             except exceptions.CmusNotRunning:
@@ -55,19 +54,22 @@ def main(port=None, music_folder='musi/'):
                     time.sleep(1)
                     continue 
                 else:
-                    print('Impossible to connect to cmus. Exiting the program...')
+                    print('\nImpossible to connect to cmus. Exiting the program...')
                     exit_cmus(cmus, cmus_process)
                     sys.exit(1)
+        print('ok\n')
 
         # Get the songs we will play
         import music_extractor
-        if not(music_extractor.MusicExtractor(music_folder).songs_list):
+        songs = music_extractor.MusicExtractor(music_folder)
+        if not(songs.num_songs):
             print("There aren't any songs in the chosen directory. Exiting program... ")
             exit_cmus(cmus, cmus_process)
             sys.exit(1)
 
         try:
-            flask_object = MusicControllerWeb(__name__, cmus)
+            from webserver.webapp import MusicControllerWeb
+            flask_object = MusicControllerWeb(__name__, cmus, songs)
             flask_object.app.run(
                 debug=False,
                 host='0.0.0.0',
@@ -78,6 +80,8 @@ def main(port=None, music_folder='musi/'):
             print('Some problem occured: ', end='')
             print(err)
             sys.exit('Exiting program...')
+        # We delete the directory with the songs' covers within
+        songs.del_covers_folder()
         # Before leaving the program, we close
         # the fork with cmus
         exit_cmus(cmus, cmus_process)
@@ -85,11 +89,11 @@ def main(port=None, music_folder='musi/'):
 if __name__ == '__main__':
     # We can choose the port where we will have
     # our app running from the console
-    if len(argv) == 1:  
+    if len(sys.argv) == 1:  
         port = None
-    elif len(argv) == 2:
+    elif len(sys.argv) == 2:
         try:
-            port = int(argv[1])
+            port = int(sys.argv[1])
         except ValueError as err:
             print('Invalid parameter: {}'.format(err))
             print('Assigning default port')

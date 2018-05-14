@@ -9,7 +9,7 @@ class MusicControllerWeb(object):
     :param str name: the name for the app
     :param PyCmus cmus: the cmus handler
     """
-    def __init__(self, name, cmus):
+    def __init__(self, name, cmus, songs):
         """
         Constructor for the class. It initializes the Flask
         object and renders the web
@@ -19,6 +19,7 @@ class MusicControllerWeb(object):
             name, template_folder="webserver/templates", static_folder="webserver/static"
         )
         self.cmus = cmus
+        self.songs = songs
         self._render_web()
 
     def _render_web(self):
@@ -33,7 +34,9 @@ class MusicControllerWeb(object):
                 _cmus_status = self.cmus.get_status_dict()
             except BrokenPipeError as err:
                 MusicControllerWeb._cmus_connection_failed(err)
-            return render_template('mainpage.html', cmus_status=_cmus_status)
+            return render_template('mainpage.html', 
+                                    cmus_status=_cmus_status, 
+                                    songs = self.songs)
 
         @self.app.route('/_post_data', methods = ['POST'])
         def worker():

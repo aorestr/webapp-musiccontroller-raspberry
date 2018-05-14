@@ -53,14 +53,6 @@ html {
     background-size: contain;
     background-repeat: no-repeat;
   }
-  .player .cover {
-    position: absolute;
-    z-index: 1;
-    width: 320px;
-    height: 250px;
-    background: linear-gradient(rgba(0, 0, 0, 0.3), rgba(0, 0, 0, 0.4)), url(http://static.stereogum.com/blogs.dir/2/files/2011/12/Adele-21.jpg) center bottom;
-    background-size: cover;
-  }
   .player nav {
     margin-top: 5px;
     position: relative;

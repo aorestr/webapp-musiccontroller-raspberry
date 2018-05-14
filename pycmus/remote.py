@@ -141,22 +141,36 @@ class PyCmus(object):
         :return resp: The response from cmus from the issued command
         :rtype: str
         """
-
-        if self.password:
-            passwd_str = 'passwd %s\n' % self.password
-            self.socket.sendall(six.binary_type(passwd_str.encode('utf8')))
+        try:
+            if self.password:
+                passwd_str = 'passwd %s\n' % self.password
+                self.socket.sendall(six.binary_type(passwd_str.encode('utf8')))
+                resp = self._read_response()
+                if resp.startswith('authentication failed'):
+                    raise exceptions.InvalidPassword()
+            self.socket.sendall(six.binary_type(cmd.encode('utf8')))
             resp = self._read_response()
-            if resp.startswith('authentication failed'):
-                raise exceptions.InvalidPassword()
-        self.socket.sendall(six.binary_type(cmd.encode('utf8')))
-        resp = self._read_response()
-        return resp
+        except BrokenPipeError as err:
+            print('Problem with connection with cmus: {}'.format(err))
+        else:
+            return resp
 
     def _read_response(self):
         total_data = []
         while True:
             try:
-                data = self.socket.recv(4096)
+                try:
+                    data = self.socket.recv(4096)
+                except ConnectionResetError:
+                    print('Problem with the connection. Closing cmus... ')
+                    try:
+                        self.send_cmd('quit\n')
+                    except Exception:
+                        print('another problem occured')
+                    else:
+                        print('ok')
+                    finally:
+                        break
                 if not data:
                     break
                 total_data.append(six.text_type(data.decode('utf8')))

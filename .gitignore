@@ -11,3 +11,4 @@ venv/
 # No test will be uploaded #
 *test*
 music/
+covers/
