@@ -224,7 +224,6 @@ class PyCmus(object):
 
         :param str play_file: The path or url to the file to play
         """
-
         self.send_cmd('player-play %s\n' % play_file)
 
     def set_volume(self, volume):

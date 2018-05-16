@@ -62,6 +62,8 @@ class MusicExtractor(object):
                 finally:
                     if new_song and (new_song.bitrate and new_song.samplerate and new_song.duration):
                         # Avoid no-song files to be added
+                        if (new_song.title is None) or (new_song.title == ''):
+                            new_song.title = song
                         songs.append((path, new_song))
         return tuple(songs)
 

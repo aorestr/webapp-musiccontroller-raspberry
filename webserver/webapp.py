@@ -15,11 +15,22 @@ class MusicControllerWeb(object):
         object and renders the web
         """
         super(MusicControllerWeb, self).__init__()
+        # Flask main method
         self.app = Flask(
             name, template_folder="webserver/templates", static_folder="webserver/static"
         )
+        # cmus controller
         self.cmus = cmus
+        # Songs information
         self.songs = songs
+        # Songs status. It stores local info.
+        # It's easier, faster and less painful 
+        # than ask cmus constantly
+        self.status = {
+            'current_song': 0,
+            'playing': False
+        }
+        # Let's render our web
         self._render_web()
 
     def _render_web(self):
@@ -29,20 +40,17 @@ class MusicControllerWeb(object):
 
         @self.app.route('/')
         def index():
-            _cmus_status = None
-            try:
-                _cmus_status = self.cmus.get_status_dict()
-            except BrokenPipeError as err:
-                MusicControllerWeb._cmus_connection_failed(err)
-            return render_template('mainpage.html', 
-                                    cmus_status=_cmus_status, 
-                                    songs = self.songs)
+            return render_template(
+                'mainpage.html', 
+                is_playing=self.status['playing'], 
+                songs = self.songs
+            )
 
         @self.app.route('/_post_data', methods = ['POST'])
         def worker():
             jsonData = request.get_json()
             self._post_handler(jsonData)
-            return jsonify(success=True, data=self.cmus.get_status_dict())
+            return jsonify(success=True, data=self.status)
             
     def _post_handler(self, jsonData):
         """
@@ -54,16 +62,34 @@ class MusicControllerWeb(object):
 
         # Buttons implemented on the webapp
         buttons = {
-            1: 'player'
+            1: 'player',
+            2: 'prev',
+            3: 'next'
         }
 
         btn_clicked = jsonData[0]['button']
         try:
             if btn_clicked == buttons[1]:
-                if self.cmus.get_only_status() == 'playing':
+                if self.status['playing'] is True:
                     self.cmus.player_pause()
                 else:
-                    self.cmus.player_play()
+                    self.cmus.player_play_file(
+                        self.songs.songs_list[self.status['current_song']][0]
+                    )
+                self.status['playing'] = not(self.status['playing'])
+            elif btn_clicked == buttons[2]:
+                if self.status['current_song'] > 0:
+                    self.status['current_song'] -= 1
+                self.cmus.player_play_file(
+                    self.songs.songs_list[self.status['current_song']][0]
+                )
+            elif btn_clicked == buttons[3]:
+                if self.status['current_song'] < self.songs.num_songs:
+                    self.status['current_song'] += 1
+                self.cmus.player_play_file(
+                    self.songs.songs_list[self.status['current_song']][0]
+                )
+
                 
         except BrokenPipeError as err:
             MusicControllerWeb._cmus_connection_failed(err)

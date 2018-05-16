@@ -42,30 +42,25 @@ THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR IMPLI
 		<div class="cover"></div>
 		<nav></nav>
 		<div class="player-ui">
+			<div class="progress"></div>
 			<div class="title">
 				<h3>{{ songs.songs_list[0][1].title }}</h3>
 			</div>
 			<div class="small">
-				<i class="material-icons">replay</i>
+				<i></i>
 				<p>{{ songs.songs_list[0][1].artist }}</p>
-				<i class="material-icons">volume_up</i>
-			</div>
-			<div class="progress">
-				<div class="played">
-					<div class="circle"></div>
-				</div>
+				<i></i>
 			</div>
 			<div class="controls">
-				<i class="material-icons">skip_previous</i>
+				<i id="prev" class="material-icons">skip_previous</i>
 				<i id="player" class="material-icons">
-					{% if cmus_status['status'] == 'playing' %}
+					{% if is_playing %}
 						pause
 					{% else %}
 						play_arrow
 					{% endif %}
 				</i>
-				<i class="material-icons">skip_next</i>
-				<i class="material-icons">shuffle</i>
+				<i id="next" class="material-icons">skip_next</i>
 			</div>
 		</div>
 
@@ -73,54 +68,24 @@ THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR IMPLI
 		</div>
 
 		<div class="music">
-			<div class="song-1">
+			{% for i in range(0,songs.num_songs) %}
+			<div class="song">
 				<div class="info">
-					<div class="img first"></div>
+					<div id="cover" class="img"
+					style="
+					background: url('static/covers/{{ i }}.jpg') center center;
+					background-size: cover;
+					"></div>
 					<div class="titles">
-						<h5>Hello</h5>
-						<p>Adele</p>
+						<h5>{{ songs.songs_list[i][1].title }}</h5>
+						<p>{{ songs.songs_list[i][1].artist }}</p>
 					</div>
 				</div>
 				<div class="state playing">
 					<i class="material-icons">equalizer</i>
 				</div>
 			</div>
-			<div class="song-2">
-				<div class="info">
-					<div class="img second"></div>
-					<div class="titles">
-						<h5>Californication</h5>
-						<p>Red Hot Chili Pepers</p>
-					</div>
-				</div>
-				<div class="state">
-					<i class="material-icons">play_arrow</i>
-				</div>
-			</div>
-			<div class="song-3">
-				<div class="info">
-					<div class="img third"></div>
-					<div class="titles">
-						<h5>6 INCH</h5>
-						<p>beyoncé</p>
-					</div>
-				</div>
-				<div class="state">
-					<i class="material-icons">play_arrow</i>
-				</div>
-			</div>
-			<div class="song-4">
-				<div class="info">
-					<div class="img fourth"></div>
-					<div class="titles">
-						<h5>Purple rain</h5>
-						<p>Prince & The Revolution</p>
-					</div>
-				</div>
-				<div class="state">
-					<i class="material-icons">play_arrow</i>
-				</div>
-			</div>
+			{% endfor %}
 		</div>
 	</div>
 

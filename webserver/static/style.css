@@ -122,22 +122,6 @@ html {
     position: relative;
     height: 2px;
     margin: 30px 20px 0px 20px;
-    background: rgba(255, 255, 255, 0.3);
-  }
-  .player .player-ui .progress .played {
-    width: 20%;
-    height: 2px;
-    position: absolute;
-    background: #F44336;
-  }
-  .player .player-ui .progress .played .circle {
-    width: 10px;
-    height: 10px;
-    background: #F44336;
-    border-radius: 50%;
-    margin-left: 52px;
-    margin-top: -4px;
-    box-shadow: 0px 0px 10px rgba(0, 0, 0, 0.7);
   }
   .player .player-ui .controls {
     display: flex;
@@ -169,61 +153,47 @@ html {
     padding: 10px 20px 0px 20px;
     background: #1A1B1E;
     margin-top: -26px;
+    overflow-y: scroll;
+    height: 100%;
   }
-  .player .music .song-1, .player .music .song-2, .player .music .song-3, .player .music .song-4 {
+  .player .music .song {
     height: 80px;
     display: flex;
     justify-content: space-between;
     align-items: center;
     border-bottom: 1px solid rgba(255, 255, 255, 0.2);
   }
-  .player .music .song-1 .info, .player .music .song-2 .info, .player .music .song-3 .info, .player .music .song-4 .info {
+  .player .music .song .info {
     display: flex;
     align-items: center;
   }
-  .player .music .song-1 .info .img, .player .music .song-2 .info .img, .player .music .song-3 .info .img, .player .music .song-4 .info .img {
+  .player .music .song .info .img {
     width: 60px;
     height: 60px;
     background: red;
     margin-right: 10px;
   }
-  .player .music .song-1 .info .img.first, .player .music .song-2 .info .img.first, .player .music .song-3 .info .img.first, .player .music .song-4 .info .img.first {
-    background: url(http://static.stereogum.com/blogs.dir/2/files/2011/12/Adele-21.jpg) center center;
-    background-size: cover;
-  }
-  .player .music .song-1 .info .img.second, .player .music .song-2 .info .img.second, .player .music .song-3 .info .img.second, .player .music .song-4 .info .img.second {
-    background: url(https://upload.wikimedia.org/wikipedia/en/d/df/RedHotChiliPeppersCalifornication.jpg) center center;
-    background-size: cover;
-  }
-  .player .music .song-1 .info .img.third, .player .music .song-2 .info .img.third, .player .music .song-3 .info .img.third, .player .music .song-4 .info .img.third {
-    background: url(http://images.rapgenius.com/59fc635f7dbe6b5cd1e07e5e605c96b5.640x640x1.jpg) center center;
-    background-size: cover;
-  }
-  .player .music .song-1 .info .img.fourth, .player .music .song-2 .info .img.fourth, .player .music .song-3 .info .img.fourth, .player .music .song-4 .info .img.fourth {
-    background: url(http://djrichiep.us/wp-content/uploads/2014/06/princelgc7F.jpg) center center;
-    background-size: cover;
-  }
-  .player .music .song-1 .info .titles h5, .player .music .song-1 .info .titles p, .player .music .song-2 .info .titles h5, .player .music .song-2 .info .titles p, .player .music .song-3 .info .titles h5, .player .music .song-3 .info .titles p, .player .music .song-4 .info .titles h5, .player .music .song-4 .info .titles p {
+  .player .music .song .info .titles h5 {
     margin: 0;
     color: white;
   }
-  .player .music .song-1 .info .titles h5, .player .music .song-2 .info .titles h5, .player .music .song-3 .info .titles h5, .player .music .song-4 .info .titles h5 {
+  .player .music .song .info .titles h5 {
     font-size: 17px;
     font-weight: 400;
     margin-bottom: 7px;
   }
-  .player .music .song-1 .info .titles p, .player .music .song-2 .info .titles p, .player .music .song-3 .info .titles p, .player .music .song-4 .info .titles p {
+  .player .music .song .info .titles p {
     font-size: 13px;
     color: #929292;
   }
-  .player .music .song-1 .state.playing i, .player .music .song-2 .state.playing i, .player .music .song-3 .state.playing i, .player .music .song-4 .state.playing i {
+  .player .music .song .state.playing i {
     color: #F44336;
   }
-  .player .music .song-1 .state i, .player .music .song-2 .state i, .player .music .song-3 .state i, .player .music .song-4 .state i {
+  .player .music .song .state i {
     color: #ddd;
   }
 
-  /* The preloader screan */
+  /* The preloader screen */
 
   #preloader {
     position: fixed;

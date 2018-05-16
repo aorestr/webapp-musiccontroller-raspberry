@@ -28,7 +28,36 @@ $(document).ready(function() {
             data : JSON.stringify(action),
             success : function(result) {
                 // Change the symbols depending on the status
-                $("#player").text( ((result['data']['status'] == "playing") ? "pause":"play_arrow") );
+                $("#player").text( ((result['data']['playing'] == true) ? "pause":"play_arrow") );
+                console.log('Well received signal'); 
+            },error : function(result){
+                console.log(result);
+            }
+        });
+    });
+
+    /**
+     * Click on the next or previous song
+     */
+    $("#prev, #next").click(function(){
+        // Create a JSON file that will be sent to
+        // the server indicating which button
+        // has been clicked
+        console.log($(this));
+        if($(this) == "#prev"){
+            var simb = "prev"
+        } else{
+            var simb = "next"
+        }
+        var action = [{"button":simb}];
+        // Send the variable
+        $.ajax({
+            type: 'POST',
+            contentType: 'application/json; charset=utf-8',
+            url: '/_post_data',
+            dataType : 'json',
+            data : JSON.stringify(action),
+            success : function(result) {
                 console.log('Well received signal'); 
             },error : function(result){
                 console.log(result);

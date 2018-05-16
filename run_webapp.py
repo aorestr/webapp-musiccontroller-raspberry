@@ -25,6 +25,16 @@ def exit_cmus(cmus, cmus_process):
             except OSError:
                 pass
 
+def init_cmus(cmus, music_folder):
+    """
+    Stop the player (in case is playing any song),
+    clear the environment (this is not necessary actually)
+    and add the music within the folder we chose
+    """
+    cmus.send_cmd('player-stop\n')
+    cmus.send_cmd('clear\n')
+    cmus.send_cmd('add {}\n'.format(music_folder))
+
 def main(port=None, music_folder='music/'):
     """
     Main function.
@@ -66,7 +76,9 @@ def main(port=None, music_folder='music/'):
             print("There aren't any songs in the chosen directory. Exiting program... ")
             exit_cmus(cmus, cmus_process)
             sys.exit(1)
-
+        # 'Reboot' cmus
+        init_cmus(cmus, songs.music_folder)
+        # Open the web server
         try:
             from webserver.webapp import MusicControllerWeb
             flask_object = MusicControllerWeb(__name__, cmus, songs)
