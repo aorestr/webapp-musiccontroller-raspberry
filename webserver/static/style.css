@@ -53,6 +53,14 @@ html {
     background-size: contain;
     background-repeat: no-repeat;
   }
+
+  .player .cover {
+    position: absolute;
+    z-index: 1;
+    width: 320px;
+    height: 250px;
+  }
+
   .player nav {
     margin-top: 5px;
     position: relative;

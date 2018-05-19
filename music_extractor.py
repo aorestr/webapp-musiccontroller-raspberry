@@ -13,9 +13,10 @@ class MusicExtractor(object):
         # Get the songs it will be possible to play
         self.songs_list = self.extract_music()
         self.num_songs = len(self.songs_list)
-        self.covers_folder = os.path.join('webserver/static', covers_folder)
-        # Create a folder with the cover images 
-        self.create_imgs()
+        if self.num_songs:
+            self.covers_folder = os.path.join('webserver/static', covers_folder)
+            # Create a folder with the cover images 
+            self.create_imgs()
 
     @staticmethod
     def music_folder_fullpath(music_folder):

@@ -25,7 +25,7 @@ def exit_cmus(cmus, cmus_process):
             except OSError:
                 pass
 
-def init_cmus(cmus, music_folder):
+def init_cmus(cmus, music_folder, first_song):
     """
     Stop the player (in case is playing any song),
     clear the environment (this is not necessary actually)
@@ -34,6 +34,9 @@ def init_cmus(cmus, music_folder):
     cmus.send_cmd('player-stop\n')
     cmus.send_cmd('clear\n')
     cmus.send_cmd('add {}\n'.format(music_folder))
+    # We choose which will be played
+    cmus.player_play_file(first_song)
+    cmus.player_stop()
 
 def main(port=None, music_folder='music/'):
     """
@@ -65,8 +68,12 @@ def main(port=None, music_folder='music/'):
                     continue 
                 else:
                     print('\nImpossible to connect to cmus. Exiting the program...')
-                    exit_cmus(cmus, cmus_process)
-                    sys.exit(1)
+                    try:
+                        exit_cmus(cmus, cmus_process)
+                    except UnboundLocalError:
+                        pass
+                    finally:                        
+                        sys.exit(1)
         print('ok\n')
 
         # Get the songs we will play
@@ -77,7 +84,7 @@ def main(port=None, music_folder='music/'):
             exit_cmus(cmus, cmus_process)
             sys.exit(1)
         # 'Reboot' cmus
-        init_cmus(cmus, songs.music_folder)
+        init_cmus(cmus, songs.music_folder, songs.songs_list[0][0])
         # Open the web server
         try:
             from webserver.webapp import MusicControllerWeb

@@ -27,28 +27,23 @@ THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR IMPLI
 
 <body>
 
-<style>
-	.player .cover {
-    position: absolute;
-    z-index: 1;
-    width: 320px;
-    height: 250px;
-    background: linear-gradient(rgba(0, 0, 0, 0.3), rgba(0, 0, 0, 0.4)), url(static/covers/0.jpg) center bottom;
-    background-size: cover;
-  }
-</style>
+
 
 	<div class="player">
-		<div class="cover"></div>
+		<div id="{{ first_song }}" class="main_cover cover" style="
+		background: linear-gradient(rgba(0, 0, 0, 0.3), rgba(0, 0, 0, 0.4)), url('static/covers/{{ first_song }}.jpg') center bottom;	
+		background-size: cover;
+		">
+		</div>
 		<nav></nav>
 		<div class="player-ui">
 			<div class="progress"></div>
 			<div class="title">
-				<h3>{{ songs.songs_list[0][1].title }}</h3>
+				<h3>{{ songs[first_song]['title'] }}</h3>
 			</div>
 			<div class="small">
 				<i></i>
-				<p>{{ songs.songs_list[0][1].artist }}</p>
+				<p>{{ songs[first_song]['artist'] }}</p>
 				<i></i>
 			</div>
 			<div class="controls">
@@ -68,17 +63,17 @@ THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR IMPLI
 		</div>
 
 		<div class="music">
-			{% for i in range(0,songs.num_songs) %}
+			{% for i in range(0,num_songs) %}
 			<div class="song">
-				<div class="info">
+				<div class="info" id="{{ i }}">
 					<div id="cover" class="img"
 					style="
 					background: url('static/covers/{{ i }}.jpg') center center;
 					background-size: cover;
 					"></div>
 					<div class="titles">
-						<h5>{{ songs.songs_list[i][1].title }}</h5>
-						<p>{{ songs.songs_list[i][1].artist }}</p>
+						<h5>{{ songs[i]['title'] }}</h5>
+						<p>{{ songs[i]['artist'] }}</p>
 					</div>
 				</div>
 				<div class="state playing">
