@@ -28,6 +28,7 @@ $(document).ready(function() {
             data : JSON.stringify(action),
             success : function(result) {
                 // Change the symbols depending on the status
+                changeSong(result['data']);
                 $("#player").text( ((result['data'][0]['playing'] == true) ? "pause":"play_arrow") );
                 console.log('Well received signal'); 
             },error : function(result){

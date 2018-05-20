@@ -38,7 +38,7 @@ def init_cmus(cmus, music_folder, first_song):
     cmus.player_play_file(first_song)
     cmus.player_stop()
 
-def main(port=None, music_folder='music/'):
+def main(port=5000, music_folder='music/'):
     """
     Main function.
     :param int port: port where the server will be
@@ -106,19 +106,19 @@ def main(port=None, music_folder='music/'):
         exit_cmus(cmus, cmus_process)
 
 if __name__ == '__main__':
-    # We can choose the port where we will have
-    # our app running from the console
-    if len(sys.argv) == 1:  
-        port = None
-    elif len(sys.argv) == 2:
-        try:
-            port = int(sys.argv[1])
-        except ValueError as err:
-            print('Invalid parameter: {}'.format(err))
-            print('Assigning default port')
-            port = None
-    else:
-        print('Invalid number of parameters. Assigning default port')
-        port = None
-    main(port)
+    # We can choose from the terminal the port and the music folder
+    # our app we will use
+    import argparse
+    parser = argparse.ArgumentParser()
+    parser.add_argument(
+        '-p', action="store", dest="port", default=5000, type=int,
+        help='Select the port it will be used for the server'
+    )
+    parser.add_argument(
+        '-mf', action="store", dest="music_folder", default='music/', type=str,
+        help='Select the path for the folder'
+    )
+    parser.add_argument('--version', action='version', version='%(prog)s 1.0')
+    input_val = parser.parse_args()
+    main(input_val.port, input_val.music_folder)
     

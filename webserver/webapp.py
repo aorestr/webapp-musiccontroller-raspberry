@@ -1,4 +1,8 @@
-from flask import Flask, render_template, request, jsonify
+try:
+    from flask import Flask, render_template, request, jsonify
+except (ModuleNotFoundError, ImportError):
+    from pip import main
+    main(['install', 'flask'])
 import json
 
 class MusicControllerWeb(object):
@@ -45,7 +49,7 @@ class MusicControllerWeb(object):
                 is_playing=self.status['playing'], 
                 songs = self.songs_info['songs'],
                 num_songs = self.songs_info['num_songs'],
-                first_song = 0
+                first_song = self.status['current_song']
             )
 
         @self.app.route('/_post_data', methods = ['POST'])
