@@ -64,7 +64,7 @@ THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR IMPLI
 
 		<div class="music">
 			{% for i in range(0,num_songs) %}
-			<div class="song">
+			<i class="song">
 				<div class="info" id="{{ i }}">
 					<div id="cover" class="img"
 					style="
@@ -76,10 +76,7 @@ THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR IMPLI
 						<p>{{ songs[i]['artist'] }}</p>
 					</div>
 				</div>
-				<div class="state playing">
-					<i class="material-icons">equalizer</i>
-				</div>
-			</div>
+			</i>
 			{% endfor %}
 		</div>
 	</div>

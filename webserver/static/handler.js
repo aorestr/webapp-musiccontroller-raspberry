@@ -18,7 +18,7 @@ $(document).ready(function() {
         // Create a JSON file that will be sent to
         // the server indicating the play arrow has been
         // clicked
-        var action = [{"button":"player"}];
+        var action = {"button":"player"};
         // Send the variable
         $.ajax({
             type: 'POST',
@@ -44,11 +44,11 @@ $(document).ready(function() {
         // the server indicating which button
         // has been clicked
         if($(this).attr("id") == "prev"){
-            var simb = "prev"
+            var simb = "prev";
         } else{
-            var simb = "next"
+            var simb = "next";
         }
-        var action = [{"button":simb}];
+        var action = {"button":simb};
         // Send the variable
         $.ajax({
             type: 'POST',
@@ -57,7 +57,32 @@ $(document).ready(function() {
             dataType : 'json',
             data : JSON.stringify(action),
             success : function(result) {
-                changeSong(result['data'])
+                changeSong(result['data']);
+                console.log('Well received signal'); 
+            },error : function(result){
+                console.log(result);
+            }
+        });
+    });
+
+    /**
+     * Select a new song by the list
+     */
+    $(".music .song").click(function(){
+        var action = {
+            "button":"new_song",
+            "song":$(".info",this).attr("id")
+        };
+        console.log(action);
+        // Send the variable
+        $.ajax({
+            type: 'POST',
+            contentType: 'application/json; charset=utf-8',
+            url: '/_post_data',
+            dataType : 'json',
+            data : JSON.stringify(action),
+            success : function(result) {
+                changeSong(result['data']);
                 console.log('Well received signal'); 
             },error : function(result){
                 console.log(result);
@@ -73,6 +98,8 @@ $(document).ready(function() {
     function changeSong(result){
         var current_song = result[0]['current_song'];
         if ( ($(".main_cover").attr("id")) != current_song ){
+            // New song, new ID
+            $(".main_cover").attr("id",current_song)
             // Change the image
             $(".main_cover").attr("style", newCover(current_song, true));
             // Change the title of the song

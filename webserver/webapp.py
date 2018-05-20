@@ -52,7 +52,10 @@ class MusicControllerWeb(object):
         def worker():
             jsonData = request.get_json()
             self._post_handler(jsonData)
-            return jsonify(success=True, data=(self.status,self.songs_info['songs']))
+            return jsonify(
+                success=True,
+                data=(self.status,self.songs_info['songs'])
+            )
 
 
     def _post_handler(self, jsonData):
@@ -67,10 +70,11 @@ class MusicControllerWeb(object):
         buttons = {
             1: 'player',
             2: 'prev',
-            3: 'next'
+            3: 'next',
+            4: 'new_song'
         }
 
-        btn_clicked = jsonData[0]['button']
+        btn_clicked = jsonData['button']
         try:
             if btn_clicked == buttons[1]:
                 # Play button
@@ -85,18 +89,24 @@ class MusicControllerWeb(object):
                 # Next song button
                 if self.status['current_song'] > 0:
                     self.status['current_song'] -= 1
-                self.cmus.player_play_file(
-                    self.songs_info['songs'][self.status['current_song']]['filename']
-                )
+                self.start_playing_current_song()
                 self.status['playing'] = True
             elif btn_clicked == buttons[3]:
                 # Previous song button
                 if self.status['current_song'] < self.songs_info['num_songs']-1:
                     self.status['current_song'] += 1
-                self.cmus.player_play_file(
-                    self.songs_info['songs'][self.status['current_song']]['filename']
-                )
-                self.status['playing'] = True   
+                self.start_playing_current_song()
+                self.status['playing'] = True
+            elif btn_clicked == buttons[4]:
+                new_song = int(jsonData["song"])
+                if (new_song >= 0) and (new_song < self.songs_info['num_songs']):
+                    self.status['current_song'] = new_song
+                    self.start_playing_current_song()
+                    self.status['playing'] = True
+                else:
+                    print("Selected song #{} is unrecheable".format(new_song))
+            else:
+                pass
         except BrokenPipeError as err:
             MusicControllerWeb._cmus_connection_failed(err)
 
@@ -125,6 +135,12 @@ class MusicControllerWeb(object):
             'num_songs': raw_songs.num_songs,
             'songs': songs
         })
+
+    
+    def start_playing_current_song(self):
+        self.cmus.player_play_file(
+            self.songs_info['songs'][self.status['current_song']]['filename']
+        )
 
 
     @staticmethod
